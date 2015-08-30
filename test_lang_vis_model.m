@@ -26,9 +26,9 @@ if true
     verb = 'approach';
     noun1 = 'person';
     noun2 = 'chair';
-    [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats);
+    [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states, debug_info ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats);
     
-    seq = viterbi_yuval(tracker_scores.em, tracker_scores.tr, 0, 1);
+    seq = viterbi_yuval(cross_em_scores, cross_tr_scores_mat, 0, 1);
     
     frame_sample_interval = 3;
     obj = VideoReader(['voc-dpm/' ppvid.vid_fname]);
@@ -50,10 +50,12 @@ if true
             d_prev = 1;
         end
         
+        trk_history(:, end+1) = cross_p_all_hmms_states{t}(:, seq(t));
         
         colors = {'r', 'b'};
         for trkr = 1:2
-            trk_history(:, end+1) = cross_p_all_hmms_states{t}(:, seq(t));
+            
+            
             d = cross_p_all_hmms_states{t}(trkr, seq(t));
             x1 = boxes{t}(d,1);
             x2 = boxes{t}(d,2);
@@ -65,7 +67,8 @@ if true
             feat_id = find(ismember(tracker_feats.names, feat_name));
             
             %     feat_val = ppvid.scores{t}(d);
-            feat_val = tracker_feats.values{t}(d_prev, d, feat_id);
+%             feat_val = tracker_feats.values{t}(d_prev, d, feat_id);
+            feat_val = t;
             feat_history(end+1) = feat_val;
             label = sprintf('%s, %2.3f', label, feat_val);
             line([x1 x1 x2 x2 x1]', [y1 y2 y2 y1 y1]', 'color', colors{trkr}, 'linewidth', 3, 'linestyle', '-');
@@ -73,7 +76,7 @@ if true
         end
         drawnow;
         shg;
-        pause(0.1)
+        pause(0.2)
         t=t+1;
         
     end

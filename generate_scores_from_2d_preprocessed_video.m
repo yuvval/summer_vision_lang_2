@@ -122,7 +122,7 @@ else
     % velocity angle
     % binning velocity orientation
     orientation_bins = [-180, -135, -45, 45, 180-45, 180];
-    abs_vel_bins = [0, 1.5, 15, 1e5];
+    abs_vel_bins = [0, 2.5, 15, 1e5];
 %     velocity_orientation = nan(n_det0*n_det1,1);
 %     velocity_binned = nan(n_det0*n_det1,1);
     for k=1:length(crossp_ids(:,2))

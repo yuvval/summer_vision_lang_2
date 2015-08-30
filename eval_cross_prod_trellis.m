@@ -1,4 +1,4 @@
-function [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats)
+function [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states, debug_info ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats)
 
 Nframes = length(tracker_feats.values);
 
@@ -74,6 +74,9 @@ for t = 1:Nframes
     
     
 end
-
+debug_info.verb_tr_scores_mat = verb_tr_scores_mat;
+debug_info.verb_em_scores = verb_em_scores;
+debug_info.noun1_em_scores = noun1_em_scores;
+debug_info.noun2_em_scores = noun2_em_scores;
 end
 
