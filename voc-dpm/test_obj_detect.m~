@@ -1,0 +1,13 @@
+init_obj_detect;
+
+im_fname = '000034.jpg'; % cars, person, buses
+im = imread(im_fname);
+
+thresh = -0.5; % Todo: understand the ranges
+
+[boxes, classes, scores, classes_names]  = obj_detect_frame(im, thresh);
+
+imshow(im);
+line([boxes(1) boxes(1) boxes(2) boxes(2) boxes(1)]', [y1 y2 y2 y1 y1]', 'color', 'r', 'linewidth', 3, 'linestyle', '-');
+
+
