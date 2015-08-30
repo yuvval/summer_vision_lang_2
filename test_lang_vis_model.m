@@ -2,7 +2,7 @@ close all
 clear
 
     
-    ppvid = load('preprocessed_videos/outfile_detections_thm0_98.mat');
+    ppvid = load('preprocessed_videos/outfile_detections_thm1_05_top_7.mat');
 %     ppvid = load('preprocessed_videos/outfile_detections_thm1_03.mat');
     
     % setting the tuning params for probabilities and features binning / sigmoiding

@@ -1,11 +1,11 @@
-function [ppvid, res_fname, fname_OF ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections)
+function [ppvid, res_fname, fname_OF, fname_depth ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections )
 %% init
 if nargin<1
     vid_fname = '../optical_flow/videos/outfile.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
-    detection_thresh = -1.05;
+    detection_thresh = -1.03;
 end
 if nargin < 3
     frame_sample_interval = 3; % Sample a frame from video once every X frames.
@@ -29,6 +29,7 @@ video = obj.read();
 
 Nframes = size(video,4);
 t = 1; % Sampled frames counter.
+depth_im{1} = error('tbd');
 for k=1:frame_sample_interval:Nframes
     
     % Evaluate detections.
@@ -37,7 +38,6 @@ for k=1:frame_sample_interval:Nframes
     [boxes{t}, classes{t}, scores{t}, classes_names]  = obj_detect_frame(im, detection_thresh);
     toc
     boxes{t} = ceil(boxes{t}); % convert to integer
-    
     % take only top-n detections
     if take_top_n_detections ~= inf
         % sort detection scores
@@ -47,9 +47,15 @@ for k=1:frame_sample_interval:Nframes
         boxes{t} = boxes{t}(sorted_ids(1:n_det), :);
         classes{t} = classes{t}(sorted_ids(1:n_det));
     end
-    %% Evaluate optical flow.
+    
     if k <= (Nframes-frame_sample_interval) % we can't eval OF for the last frame, so we skip it.
+    %% Evaluate depth
         im2 = video (:,:,:,k+frame_sample_interval);
+        depth_im{t+1} = error('tbd on im2');
+    
+    
+    %% Evaluate optical flow. + depth flow
+        
         [im1gray, im2gray] = acquistionSeq(im, im2);
         
         uvOF = OpticalFlowCLG_TV(im1gray, im2gray);
@@ -58,7 +64,7 @@ for k=1:frame_sample_interval:Nframes
         % Evaluate detection boxes mean optical flow.
         
         n_detections = size(boxes{t},1);
-        [centers{t}, projected_centers{t}] = deal(nan(n_detections ,2));
+        [centers{t}, projected_centers{t}] = deal(nan(n_detections ,3));
         
         for d=1:n_detections
             x1 = boxes{t}(d,1);
@@ -74,27 +80,40 @@ for k=1:frame_sample_interval:Nframes
             v_box = v(x1:x2, y1:y2);
             v_avg_box = mean(v_box(:));
             
+            depth_box = depth_im{t}(x1:x2, y1:y2);
+            depth_box_avg = mean(depth_box(:));
+
             center_x = (x1+x2)/2;
             center_y = (y1+y2)/2;
-            centers{t}(d,:) = [center_x, center_y];
+            center_z = depth_box_avg;
+            centers{t}(d,:) = [center_x, center_y, center_z];
             
+            projected_depth_box = depth_im{t+1}((x1:x2)+u_avg_box, (y1:y2)+v_avg_box);
+            projected_depth_box_avg = mean(projected_depth_box(:));
+
             projected_center_x = center_x + u_avg_box;
             projected_center_y = center_y + v_avg_box;
-            projected_centers{t}(d,:) = [projected_center_x, projected_center_y];
+            projected_center_z = projected_depth_box_avg;
+            projected_centers{t}(d,:) = [projected_center_x, projected_center_y, projected_center_z];
             
         end
     else % eval centers for last frame (no OF there)
         n_detections = size(boxes{t},1);
-        centers{t} = nan(n_detections ,2);
+        centers{t} = nan(n_detections ,3);
         for d=1:n_detections
             x1 = boxes{t}(d,1);
             x2 = boxes{t}(d,2);
             y1 = boxes{t}(d,3);
             y2 = boxes{t}(d,4);
 
+            depth_box = depth_im{t}(x1:x2, y1:y2);
+            depth_box_avg = mean(depth_box(:));
+
             center_x = (x1+x2)/2;
             center_y = (y1+y2)/2;
-            centers{t}(d,:) = [center_x, center_y];
+            center_z = depth_box_avg;
+
+            centers{t}(d,:) = [center_x, center_y, center_z];
         end
     end
     
