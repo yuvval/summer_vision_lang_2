@@ -1,19 +1,20 @@
 function [ppvid, res_fname, fname_OF, fname_depth ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections )
 %% init
 if nargin<1
-    vid_fname = '../optical_flow/videos/outfile.avi'; % Person approaches a chair.
+    vid_fname = '../videos/2chairs_approach_diagonal.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
-    detection_thresh = -1.03;
+    detection_thresh = -1.05;
 end
 if nargin < 3
-    frame_sample_interval = 3; % Sample a frame from video once every X frames.
+    frame_sample_interval = 10; % Sample a frame from video once every X frames.
 end
 if nargin < 4
     take_top_n_detections = 7;
 end
 
+addpath ../
 addpath ../optical_flow
 addpath ../optical_flow/algorithms/CLG-TV/
 
@@ -29,7 +30,9 @@ video = obj.read();
 
 Nframes = size(video,4);
 t = 1; % Sampled frames counter.
-depth_im{1} = error('tbd');
+tic 
+depth_im{1} = getDepth_Fayao(video(:,:,:,1)); % eval the depth for the 1st frame
+toc
 for k=1:frame_sample_interval:Nframes
     
     % Evaluate detections.
@@ -51,8 +54,9 @@ for k=1:frame_sample_interval:Nframes
     if k <= (Nframes-frame_sample_interval) % we can't eval OF for the last frame, so we skip it.
     %% Evaluate depth
         im2 = video (:,:,:,k+frame_sample_interval);
-        depth_im{t+1} = error('tbd on im2');
-    
+        tic
+        depth_im{t+1} = getDepth_Fayao(im2);
+        toc
     
     %% Evaluate optical flow. + depth flow
         
@@ -66,6 +70,8 @@ for k=1:frame_sample_interval:Nframes
         n_detections = size(boxes{t},1);
         [centers{t}, projected_centers{t}] = deal(nan(n_detections ,3));
         
+        max_x_dim = size(im,2);
+        max_y_dim = size(im,1);
         for d=1:n_detections
             x1 = boxes{t}(d,1);
             x2 = boxes{t}(d,2);
@@ -88,12 +94,21 @@ for k=1:frame_sample_interval:Nframes
             center_z = depth_box_avg;
             centers{t}(d,:) = [center_x, center_y, center_z];
             
-            projected_depth_box = depth_im{t+1}((x1:x2)+u_avg_box, (y1:y2)+v_avg_box);
-            projected_depth_box_avg = mean(projected_depth_box(:));
+            
+            projected_x_range = round((x1:x2)+u_avg_box);
+            projected_x_range(projected_x_range > max_x_dim) = [];
+            projected_x_range(projected_x_range < 1) = [];
+            
+            projected_y_range = round((y1:y2)+v_avg_box);
+            projected_y_range(projected_y_range > max_y_dim) = [];
+            projected_y_range(projected_y_range < 1) = [];
+
+            projected_depth_box = depth_im{t+1}(projected_x_range, projected_y_range);
+            projected_center_z = mean(projected_depth_box(:));
 
             projected_center_x = center_x + u_avg_box;
             projected_center_y = center_y + v_avg_box;
-            projected_center_z = projected_depth_box_avg;
+%             projected_center_z = projected_depth_box_avg;
             projected_centers{t}(d,:) = [projected_center_x, projected_center_y, projected_center_z];
             
         end
@@ -145,7 +160,7 @@ end
 th_str = regexprep(num2str(detection_thresh), '-', 'm');
 th_str = regexprep(th_str, '\.', '_');
 
-res_fname = ['../preprocessed_videos/' vid_name '_detections_th' th_str top_str];
+res_fname = ['../preprocessed_videos/' vid_name '_3D_detections_th' th_str top_str];
 save(res_fname, 'vid_fname', 'boxes', 'classes', 'scores', 'classes_names', 'centers', 'projected_centers' ,'detection_thresh', 'frame_sample_interval', 'take_top_n_detections');
 ppvid = load(res_fname);
 

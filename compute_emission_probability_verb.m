@@ -29,7 +29,7 @@ center2_y = tracker_feats.values{n_frame}(1, n_tracker2_state, feat_id);
 distance= sqrt((center1_x-center2_x)^2+(center1_y-center2_y)^2);
 
 my_eps = 1e-10;
-my_eps = 0;
+% my_eps = 0;
 if verb_state_n == 1
     if velocity1_binned==1 && velocity2_binned==1 &&  (distance>50)
         em_prob_verb = 1;

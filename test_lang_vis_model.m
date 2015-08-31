@@ -2,9 +2,9 @@ close all
 clear
 
     
-%     ppvid = load('preprocessed_videos/outfile_detections_thm1_05_top_7.mat');
-    ppvid = load('preprocessed_videos/approach_behind_detections_thm1_05_top_7.mat');
-    %     ppvid = load('preprocessed_videos/outfile_detections_thm1_03.mat');
+%     ppvid = load('preprocessed_videos/2chairs_approach_diagonal_detections_thm1_05_top_7.mat');
+    ppvid = load('preprocessed_videos/2chairs_approach_behind_detections_thm1_05_top_7.mat');
+%     ppvid = load('preprocessed_videos/2chairs_approach_side_detections_thm1_05_top_7.mat');
     
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
@@ -78,7 +78,7 @@ if true
         end
         drawnow;
         shg;
-        pause(0.2)
+        pause(0.5)
         t=t+1;
         
     end
