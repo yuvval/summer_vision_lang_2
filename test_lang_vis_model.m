@@ -8,7 +8,8 @@ clear
 %     ppvid = load('preprocessed_videos/2chairs_approach_side_detections_thm1_05_top_7.mat');
 
 %% 3D
-    ppvid = load('preprocessed_videos/2chairs_approach_diagonal_3D_detections_thm1_05_top_7.mat');
+%     ppvid = load('preprocessed_videos/2chairs_approach_diagonal_3D_detections_thm1_05_top_7.mat');
+    ppvid = load('preprocessed_videos/2chairs_approach_behind_3D_detections_thm1_05_top_7.mat');
 
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
@@ -27,8 +28,8 @@ clear
     
     [tracker_scores.em, tracker_scores.tr, tracker_feats] = generate_scores_from_2d_preprocessed_video(ppvid, tuning_params);
     
-    verb = 'approach';
-    noun1 = 'person';
+    verb = 'is on right side of';
+    noun1 = 'chair';
     noun2 = 'chair';
     [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states, debug_info ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats);
     

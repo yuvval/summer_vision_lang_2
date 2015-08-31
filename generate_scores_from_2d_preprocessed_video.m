@@ -57,8 +57,15 @@ end
 
 function [all_comb_features_of_frame, features_per_transition_names] = get_all_combinations_of_features_of_frame(t, ppvid)
 
-% features per transition (per frame) names
-features_per_transition_names = {'class', 'center_x', 'center_y', 'velocity_binned', 'velocity_orientation', 'velocity_abs', 'velocity_angle'};
+if size(ppvid.centers{1},2) == 3
+    % With depth
+    % features per transition (per frame) names
+    features_per_transition_names = {'class', 'center_x', 'center_y', 'center_z', 'velocity_binned', 'velocity_orientation', 'velocity_abs', 'velocity_angle'};
+else
+    % Without depth.
+    % features per transition (per frame) names
+    features_per_transition_names = {'class', 'center_x', 'center_y', 'velocity_binned', 'velocity_orientation', 'velocity_abs', 'velocity_angle'};
+end
 
 f_num = length(features_per_transition_names);
 
@@ -97,6 +104,16 @@ feat_id = find(ismember(features_per_transition_names, feat_name));
 for k=1:length(crossp_ids(:,2))
     all_comb_features_of_frame(:, crossp_ids(k,2), feat_id) = ppvid.centers{t}(crossp_ids(k,2), 2);
 end
+if size(ppvid.centers{1},2) == 3
+    % With depth
+    % center z coordinate
+    feat_name = 'center_z';
+    feat_id = find(ismember(features_per_transition_names, feat_name));
+    % all_comb_features_of_frame(crossp_ids(:,1), crossp_ids(:,2), feat_id) = ppvid.centers{t}(crossp_ids(:,2));
+    for k=1:length(crossp_ids(:,2))
+        all_comb_features_of_frame(:, crossp_ids(k,2), feat_id) = ppvid.centers{t}(crossp_ids(k,2), 3);
+    end
+end
 
 % velocity_binned
 feat_name = 'velocity_binned';
@@ -122,7 +139,13 @@ else
     % velocity angle
     % binning velocity orientation
     orientation_bins = [-180, -135, -45, 45, 180-45, 180];
-    abs_vel_bins = [0, 2.5, 15, 1e5];
+    if size(ppvid.centers{1},2) == 3
+        % With depth
+        abs_vel_bins = [0, 4, 15, 1e5];
+    else
+        % Without depth.
+        abs_vel_bins = [0, 2.5, 15, 1e5];
+    end
 %     velocity_orientation = nan(n_det0*n_det1,1);
 %     velocity_binned = nan(n_det0*n_det1,1);
     for k=1:length(crossp_ids(:,2))
