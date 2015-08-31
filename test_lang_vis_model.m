@@ -2,8 +2,9 @@ close all
 clear
 
     
-    ppvid = load('preprocessed_videos/outfile_detections_thm1_05_top_7.mat');
-%     ppvid = load('preprocessed_videos/outfile_detections_thm1_03.mat');
+%     ppvid = load('preprocessed_videos/outfile_detections_thm1_05_top_7.mat');
+    ppvid = load('preprocessed_videos/approach_behind_detections_thm1_05_top_7.mat');
+    %     ppvid = load('preprocessed_videos/outfile_detections_thm1_03.mat');
     
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
@@ -31,7 +32,7 @@ clear
     
 %% visualize sequence
 if true
-    frame_sample_interval = 3;
+    frame_sample_interval = 10;
     obj = VideoReader(['voc-dpm/' ppvid.vid_fname]);
     video = obj.read();
     
