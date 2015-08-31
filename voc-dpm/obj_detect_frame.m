@@ -11,7 +11,10 @@ classes_names = {};
 
 %% get all detectors names
 path = 'VOC2010/';
-detectors_fnames = dir([ path '*.mat']);
+% detectors_fnames = dir([ path '*.mat']);
+
+%% only run the person detector
+detectors_fnames(1).name = 'person_final.mat';
 
 N = length(detectors_fnames);
 
