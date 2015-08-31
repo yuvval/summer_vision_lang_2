@@ -1,11 +1,11 @@
 function [ppvid, res_fname, fname_OF ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections)
 %% init
 if nargin<1
-    vid_fname = '../videos/2chairs_approach_diagonal.avi'; % Person approaches a chair.
+    vid_fname = '../videos/approach_people_behind.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
-    detection_thresh = -1.05;
+    detection_thresh = -1.2;
 end
 if nargin < 3
     frame_sample_interval = 10; % Sample a frame from video once every X frames.

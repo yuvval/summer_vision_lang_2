@@ -1,4 +1,4 @@
-function seq = viterbi_yuval(em_scores, tr_scores, prev_frame_scores, t)
+function [seq, best_score_history] = viterbi_yuval(em_scores, tr_scores, prev_frame_scores, t)
 
 Nframes = length(em_scores);
 
@@ -20,16 +20,18 @@ for s=1:n_states
     frame_scores(s) = em_scores{t}(s) + max(prev_frame_scores(:) + curr_tr_scores(:,s));
 end
 
-[~, best_state] = max(frame_scores);
+[best_score, best_state] = max(frame_scores);
 
 if t < Nframes
-    seq = viterbi_yuval(em_scores, tr_scores, frame_scores, t+1);
+    [seq, best_score_history] = viterbi_yuval(em_scores, tr_scores, frame_scores, t+1);
 end
 
 if t == Nframes
     seq = best_state;
+    best_score_history = best_score;
 %     frames_scores = frame_scores;
 else
     seq = [best_state; seq ];
+    best_score_history = [best_score; best_score_history];
 %     frames_scores = [frame_scores; frames_scores];
 end
