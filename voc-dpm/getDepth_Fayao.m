@@ -4,6 +4,7 @@ varargin={};
 run( '~/externals/depth-fayao/libs/vlfeat-0.9.18/toolbox/vl_setup');
 dir_matConvNet='~/externals/depth-fayao/libs/matconvnet_20141015/matlab/';
 addpath(genpath(dir_matConvNet));
+addpath('~/externals/depth-fayao/demo');
 run([dir_matConvNet 'vl_setupnn.m']);
 
 opts=[];
