@@ -5,15 +5,18 @@ clear
 %% 2D
 %     ppvid = load('preprocessed_videos/2chairs_approach_diagonal_detections_thm1_05_top_7.mat');
 %     ppvid = load('preprocessed_videos/2chairs_approach_behind_detections_thm1_05_top_7.mat');
+%     ppvid = load('preprocessed_videos/approach_behind_detections_thm1_05_top_7.mat');
 %     ppvid = load('preprocessed_videos/2chairs_approach_side_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_side_detections_thm1_05_top_7.mat');
-     ppvid = load('preprocessed_videos/approach_people_behind_detections_thm1_05_top_7.mat');
+%      ppvid = load('preprocessed_videos/approach_people_behind_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_diagonal_detections_thm1_05_top_7.mat');
 
 %% 3D
 %     ppvid = load('preprocessed_videos/2chairs_approach_diagonal_3D_detections_thm1_05_top_7.mat');
 %     ppvid = load('preprocessed_videos/2chairs_approach_side_3D_detections_thm1_05_top_7.mat');
-%    ppvid = load('preprocessed_videos/2chairs_approach_behind_3D_detections_thm1_05_top_7.mat');
+%    ppvid = load('preprocessed_videos/2chairs_approach_behind_3D_detections_thm1_5_top_7.mat');
+%     ppvid = load('preprocessed_videos/approach_people_behind_3D_detections_thm1_05_top_7.mat');
+   ppvid = load('preprocessed_videos/approach_behind_3D_detections_thm1_5_top_3.mat');
 
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
@@ -33,16 +36,18 @@ clear
     [tracker_scores.em, tracker_scores.tr, tracker_feats] = generate_scores_from_2d_preprocessed_video(ppvid, tuning_params);
     
 %     verb = 'is on right side of';
+%     noun1 = 'chair';
     verb = 'approach';
     noun1 = 'person';
-    noun2 = 'person';
+
+    noun2 = 'chair';
     [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states, debug_info ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats);
     
-    [seq, best_score_history] = viterbi_yuval(cross_em_scores, cross_tr_scores_mat, 0, 1);
+    [seq, score_track, score_history] = viterbi_yuval(cross_em_scores, cross_tr_scores_mat, 0, 1);
     
 %% visualize sequence
 if true
-    frame_sample_interval = 10;
+    frame_sample_interval = 15;
     obj = VideoReader(['voc-dpm/' ppvid.vid_fname]);
     video = obj.read();
     
@@ -80,7 +85,7 @@ if true
             
             %     feat_val = ppvid.scores{t}(d);
 %             feat_val = tracker_feats.values{t}(d_prev, d, feat_id);
-            feat_val = best_score_history(t);
+            feat_val = score_track(t);
             feat_history(end+1) = feat_val;
             label = sprintf('%s, %2.3f', label, feat_val);
             line([x1 x1 x2 x2 x1]', [y1 y2 y2 y1 y1]', 'color', colors{trkr}, 'linewidth', 3, 'linestyle', '-');

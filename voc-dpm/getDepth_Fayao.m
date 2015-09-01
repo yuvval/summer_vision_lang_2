@@ -137,8 +137,9 @@ end
     depths_pred = do_model_evaluate(model_trained, ds_info, opts_eval);
     %% normalizing according to number of pixels per dimension
     %  so depth measurements will be in the same scale as x and y distances
-    npixels_coefficient = mean(size(img_data,1),size(img_data,2));
-    depths_pred = npixels_coefficient*depths_pred/mean(depths_pred(:));
+    npixels_coefficient = 3*mean(size(img_data,1),size(img_data,2))/3;
+    depths_pred = npixels_coefficient*depths_pred;
+%     depths_pred = depths_pred - median(depths_pred(:));
     depths_pred = depths_pred.';
 
 %     fprintf('inpaiting using Anat Levin`s colorization code, this may take a while...\n');

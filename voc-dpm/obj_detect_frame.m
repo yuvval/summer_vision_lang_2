@@ -15,6 +15,7 @@ path = 'VOC2010/';
 
 %% only run the person detector
 detectors_fnames(1).name = 'person_final.mat';
+detectors_fnames(2).name = 'chair_final.mat';
 
 N = length(detectors_fnames);
 

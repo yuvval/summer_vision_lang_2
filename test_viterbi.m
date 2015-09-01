@@ -49,7 +49,7 @@ tuning_params.sig_b_trans = -4;
 
 [s_em, s_tr, feat_per_tr] = generate_scores_from_2d_preprocessed_video(ppvid, tuning_params);
 
-seq = viterbi_yuval(s_em, s_tr, 0, 1);
+[seq, score_track, score_history] = viterbi_yuval(s_em, s_tr, 0, 1);
     
 frame_sample_interval = 3;
 obj = VideoReader(['voc-dpm/' ppvid.vid_fname]);
@@ -81,14 +81,15 @@ for k = 1:frame_sample_interval:size(video,4)
     feat_id = find(ismember(feat_per_tr.names, feat_name));
     
 %     feat_val = ppvid.scores{t}(d);
-    feat_val = feat_per_tr.values{t}(d_prev, d, feat_id);
+%     feat_val = feat_per_tr.values{t}(d_prev, d, feat_id);
+    feat_val = score_track(t);
     feat_history(end+1) = feat_val;
     label = sprintf('%s, %2.3f', label, feat_val);
     line([x1 x1 x2 x2 x1]', [y1 y2 y2 y1 y1]', 'color', 'r', 'linewidth', 3, 'linestyle', '-');
     text(x1, y1, label, 'Color', 'white');
     drawnow;
     shg;
-    pause(0.5)
+    pause(0.2)
     t=t+1;
 end
 end

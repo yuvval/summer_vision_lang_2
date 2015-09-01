@@ -1,18 +1,20 @@
-function [ppvid, res_fname, fname_OF, fname_depth ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections )
+function [ppvid, res_fname, fname_OF, depth_im ] = preprocess_video_3d(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections )
 %% init
 if nargin<1
-    vid_fname = '../videos/approach_people_diagonal.avi'; % Person approaches a chair.
+    vid_fname = '../videos/after2sec_behind.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
-    detection_thresh = -1.05;
+    detection_thresh = -1.5;
 end
 if nargin < 3
-    frame_sample_interval = 10; % Sample a frame from video once every X frames.
+    frame_sample_interval = 15; % Sample a frame from video once every X frames.
 end
 if nargin < 4
-    take_top_n_detections = 7;
+    take_top_n_detections = 3;
 end
+
+trim_first_seconds = 3;
 
 addpath ../
 addpath ../optical_flow
@@ -33,7 +35,7 @@ t = 1; % Sampled frames counter.
 tic 
 depth_im{1} = getDepth_Fayao(video(:,:,:,1)); % eval the depth for the 1st frame
 toc
-for k=1:frame_sample_interval:Nframes
+for k=1 + (trim_first_seconds*30):frame_sample_interval:Nframes
     
     % Evaluate detections.
     im=video(:,:,:,k);
@@ -86,11 +88,21 @@ for k=1:frame_sample_interval:Nframes
             v_box = v(x1:x2, y1:y2);
             v_avg_box = mean(v_box(:));
             
-            depth_box = depth_im{t}(x1:x2, y1:y2);
-            depth_box_avg = mean(depth_box(:));
-
             center_x = (x1+x2)/2;
             center_y = (y1+y2)/2;
+
+            len_x = x2-x1;
+            len_y = y2-y1;
+            % taking the only the depth measurement around the center, so
+            % we can avoid the background depth.
+            trim_len_x = ceil(len_x/4);
+            trim_len_y = ceil(len_y/4);
+            
+            range_depth_box_x = ceil((center_x-trim_len_x):(center_x+trim_len_x));
+            range_depth_box_y = ceil((center_y-trim_len_y):(center_y+trim_len_y));
+            depth_box = depth_im{t}(range_depth_box_x, range_depth_box_y);
+            depth_box_avg = mean(depth_box(:));
+
             center_z = depth_box_avg;
             centers{t}(d,:) = [center_x, center_y, center_z];
             

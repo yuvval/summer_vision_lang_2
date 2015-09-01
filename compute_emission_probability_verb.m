@@ -30,10 +30,11 @@ center2_y = tracker_feats.values{n_frame}(1, n_tracker2_state, feat_id);
 
 % distance= sqrt((center1_x-center2_x)^2+(center1_y-center2_y)^2);
 
-my_eps = 1e-10;
+my_eps = 1e-200;
 % my_eps = 0;
 if verb_state_n == 1
-    if velocity1_binned==1 && velocity2_binned==1 &&  (center1_x > center2_x)
+%     if velocity1_binned==1 && velocity2_binned==1 &&  (center1_x > center2_x)
+    if  (center1_x > center2_x)
         em_prob_verb = 1;
     else 
         em_prob_verb = my_eps;
@@ -71,10 +72,10 @@ else
 end
 distance= sqrt((center1_x-center2_x)^2+(center1_y-center2_y)^2 + (center1_z-center2_z)^2);
 
-my_eps = 1e-10;
+my_eps = 1e-200;
 % my_eps = 0;
 if verb_state_n == 1
-    if velocity1_binned==1 && velocity2_binned==1 &&  (distance>50)
+    if velocity1_binned==1 && velocity2_binned==1 &&  (distance>100)
         em_prob_verb = 1;
     else 
         em_prob_verb = my_eps;
@@ -82,7 +83,8 @@ if verb_state_n == 1
 end
         
 if verb_state_n == 2
-    if velocity1_binned==2 && velocity2_binned==1 &&  (distance>50)
+%     if velocity1_binned==2 && velocity2_binned==1 &&  (distance>100)
+    if (distance>100)
         em_prob_verb = 1;
     else 
         em_prob_verb = my_eps;
@@ -91,7 +93,8 @@ end
 
                       
 if verb_state_n == 3
-    if velocity1_binned==1 && velocity2_binned==1 &&  (distance < 50) &&(distance > 1)  
+%     if velocity1_binned==1 && velocity2_binned==1 &&  (distance < 100) &&(distance > 1)  && n_frame>1 
+    if (distance < 100) &&(distance > 1)  && n_frame>1 
         em_prob_verb = 1;
     else 
         em_prob_verb = my_eps;

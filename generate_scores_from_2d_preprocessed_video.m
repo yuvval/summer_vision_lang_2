@@ -141,7 +141,7 @@ else
     orientation_bins = [-180, -135, -45, 45, 180-45, 180];
     if size(ppvid.centers{1},2) == 3
         % With depth
-        abs_vel_bins = [0, 4, 15, 1e5];
+        abs_vel_bins = [0, 25, 50, 1e5];
     else
         % Without depth.
         abs_vel_bins = [0, 2.5, 15, 1e5];
