@@ -10,16 +10,16 @@ for t = 1:Nframes
     % caching scores per word and its observations upon the tracker
     [noun1_em_scores{t}, noun2_em_scores{t}] = deal(nan(length(tracker_scores.em{t}),1));
     for tracker_state = 1:length(tracker_scores.em{t})
-        noun1_em_scores{t}(tracker_state) = log( compute_emission_probability_noun(noun1, tracker_feats, t, tracker_state));
-        noun2_em_scores{t}(tracker_state) = log( compute_emission_probability_noun(noun2, tracker_feats, t, tracker_state));
+        noun1_em_scores{t}(tracker_state) = log10( compute_emission_probability_noun(noun1, tracker_feats, t, tracker_state));
+        noun2_em_scores{t}(tracker_state) = log10( compute_emission_probability_noun(noun2, tracker_feats, t, tracker_state));
     end
     
-    verb_tr_scores_mat = log(verb_transition_probability(verb));
+    verb_tr_scores_mat = log10(verb_transition_probability(verb));
     cross_p_trackers_states = allcomb(1:n_det1, 1:n_det1).';
     n_verb_states = size(verb_tr_scores_mat,1);
     for verb_state = 1:n_verb_states
         for states = cross_p_trackers_states
-            verb_em_scores{t}(states(1), states(2), verb_state) = log(compute_emission_probability_verb(verb, verb_state, tracker_feats, t, states(1), states(2)));
+            verb_em_scores{t}(states(1), states(2), verb_state) = log10(compute_emission_probability_verb(verb, verb_state, tracker_feats, t, states(1), states(2)));
         end
     end
     

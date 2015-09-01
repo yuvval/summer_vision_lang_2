@@ -7,7 +7,7 @@ function [em_prob_verb] = compute_emission_probability_verb(verb_name, verb_stat
 switch verb_name
     case 'is on right side of' 
         em_prob_verb = right_side_of_em_prob(verb_state_n, tracker_feats, n_frame, n_tracker1_state, n_tracker2_state);
-    case 'approach' 
+    case 'approaches' 
         em_prob_verb = approach_em_prob(verb_state_n, tracker_feats, n_frame, n_tracker1_state, n_tracker2_state);
 end
 end

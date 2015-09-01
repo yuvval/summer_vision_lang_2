@@ -41,7 +41,7 @@ clear
     
 %     verb = 'is on right side of';
 %     noun1 = 'chair';
-    verb = 'approach';
+    verb = 'approaches';
     noun1 = 'person';
 
     noun2 = 'chair';
@@ -63,6 +63,16 @@ if true
     trk_history = nan(5,1);
 %     for k = 1:frame_sample_interval:size(video,4)
 trim_first_seconds = 3;
+
+fname_split = regexp(ppvid.vid_fname, '[\./]', 'split');
+vid_name = fname_split{end-1};
+is_3d_system = any(ismember(tracker_feats.names, 'center_z'));
+if is_3d_system
+    ext_3d_2d = '3d';
+else
+    ext_3d_2d = '2d';
+end    
+animated_gif_fname = [vid_name '_' ext_3d_2d '.gif'];
 for k=1 + (trim_first_seconds*30):frame_sample_interval:size(video,4)
         
         im=video(:,:,:,k);
@@ -76,7 +86,7 @@ for k=1 + (trim_first_seconds*30):frame_sample_interval:size(video,4)
         
         trk_history(:, end+1) = cross_p_all_hmms_states{t}(:, seq(t));
         
-        colors = {'r', 'b'};
+        colors = {'y', 'r'};
         for trkr = 1:2
             
             
@@ -86,21 +96,23 @@ for k=1 + (trim_first_seconds*30):frame_sample_interval:size(video,4)
             y1 = boxes{t}(d,3);
             y2 = boxes{t}(d,4);
             label = ppvid.classes_names{ppvid.classes{t}(d)};
-            %     label = sprintf('%s, %2.3f', label, ppvid.scores{t}(d));
-            feat_name = 'velocity_abs';
-            feat_id = find(ismember(tracker_feats.names, feat_name));
-            
-            %     feat_val = ppvid.scores{t}(d);
+%             label = sprintf('%s, %2.3f', label, ppvid.scores{t}(d));
+%             feat_name = 'velocity_abs';
+%             feat_id = find(ismember(tracker_feats.names, feat_name));
+%             feat_val = ppvid.scores{t}(d);
 %             feat_val = tracker_feats.values{t}(d_prev, d, feat_id);
             feat_val = score_track(t);
             feat_history(end+1) = feat_val;
-            label = sprintf('%s, %2.3f', label, feat_val);
+            label = sprintf('%s, %2.1f', label, feat_val);
             line([x1 x1 x2 x2 x1]', [y1 y2 y2 y1 y1]', 'color', colors{trkr}, 'linewidth', 3, 'linestyle', '-');
-            text(x1, y1, label, 'Color', 'white');
+            text(x1, y1+11, label, 'Color', 'white', 'FontSize', 10, 'fontweight','bold');
         end
+        xlabel(sprintf('a %s %s a %s', noun1, verb, noun2)); 
         drawnow;
         shg;
         pause(0.9)
+        save_animated_gif_frame(animated_gif_fname, t==1);
+        save_animated_gif_frame(animated_gif_fname, false); % save the same frame twice, to slow down animation
         t=t+1;
         
     end

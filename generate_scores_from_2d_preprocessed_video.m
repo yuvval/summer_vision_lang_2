@@ -28,9 +28,9 @@ for t=1:Nframes
             sig_a = tp.other.sig_a;
             sig_b = tp.other.sig_b;
         end
-        emission_scores_vec{t}(d) = log(sigmoid(ppvid.scores{t}(d), sig_a, sig_b));
+        emission_scores_vec{t}(d) = log10(sigmoid(ppvid.scores{t}(d), sig_a, sig_b));
     end
-%     emission_scores_vec{t} = log(sigmoid(ppvid.scores{t}, tp.sig_a_emis, tp.sig_b_emis));
+%     emission_scores_vec{t} = log10(sigmoid(ppvid.scores{t}, tp.sig_a_emis, tp.sig_b_emis));
     
     if t<Nframes
         % eval transtion scores per frame
@@ -43,7 +43,7 @@ for t=1:Nframes
         centers_dist = sqrt(sum(centers_diff.^2,2));
         minus_dist = -centers_dist;
         
-        s_tran_vec = log(sigmoid(minus_dist, tp.sig_a_trans, tp.sig_b_trans));
+        s_tran_vec = log10(sigmoid(minus_dist, tp.sig_a_trans, tp.sig_b_trans));
         transition_scores_mat{t} = full(sparse(crossp_ids(:,1), crossp_ids(:,2), s_tran_vec));
         if t>1
             assert(size(transition_scores_mat{t-1},2) == length(emission_scores_vec{t})); % sanity check, error if false
