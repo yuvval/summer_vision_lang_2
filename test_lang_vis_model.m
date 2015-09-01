@@ -9,8 +9,9 @@ clear
 %     ppvid = load('preprocessed_videos/2chairs_approach_side_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_side_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_behind_detections_thm1_05_top_7.mat');
-%      ppvid = load('preprocessed_videos/approach_people_diagonal_detections_thm1_05_top_7.mat');
+%      ppvid = load('preבג processed_videos/approach_people_diagonal_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/after2sec_behind_detections_thm1_5_top_3.mat');
+     ppvid = load('preprocessed_videos/after2sec_behind_detections_thm1_5_top_7.mat');
 %      ppvid = load('preprocessed_videos/after2sec_diagonal_detections_thm1_5_top_3.mat');
 
 %% 3D
@@ -19,7 +20,7 @@ clear
 %    ppvid = load('preprocessed_videos/2chairs_approach_behind_3D_detections_thm1_5_top_7.mat');
 %     ppvid = load('preprocessed_videos/approach_people_behind_3D_detections_thm1_05_top_7.mat');
 %    ppvid = load('preprocessed_videos/after2sec_behind_3D_detections_thm1_5_top_3.mat');
-     ppvid = load('preprocessed_videos/after2sec_diagonal_3D_detections_thm1_5_top_3.mat');
+%      ppvid = load('preprocessed_videos/after2sec_diagonal_3D_detections_thm1_5_top_3.mat');
 
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
