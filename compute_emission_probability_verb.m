@@ -62,11 +62,16 @@ center2_y = tracker_feats.values{n_frame}(1, n_tracker2_state, feat_id);
 if any(ismember(tracker_feats.names, 'center_z'))
     % With depth
     % center z coordinate
+    
+    close_distance = 180;
+    far_distance = 300;
     feat_name = 'center_z';
     feat_id = find(ismember(tracker_feats.names, feat_name));
     center1_z = tracker_feats.values{n_frame}(1, n_tracker1_state, feat_id);
     center2_z = tracker_feats.values{n_frame}(1, n_tracker2_state, feat_id);
 else
+    close_distance = 150;
+    far_distance = 300;
     center1_z = 0;
     center2_z = 0;
 end
@@ -75,7 +80,8 @@ distance= sqrt((center1_x-center2_x)^2+(center1_y-center2_y)^2 + (center1_z-cent
 my_eps = 1e-200;
 % my_eps = 0;
 if verb_state_n == 1
-    if velocity1_binned==1 && velocity2_binned==1 &&  (distance>100)
+%     if velocity1_binned==1 && velocity2_binned==1 &&  (distance>far_distance)
+    if (distance>far_distance)
         em_prob_verb = 1;
     else 
         em_prob_verb = my_eps;
@@ -84,20 +90,20 @@ end
         
 if verb_state_n == 2
 %     if velocity1_binned==2 && velocity2_binned==1 &&  (distance>100)
-    if (distance>100)
+    if (distance>close_distance)
         em_prob_verb = 1;
     else 
-        em_prob_verb = my_eps;
+        em_prob_verb = 0;
     end
 end
 
                       
 if verb_state_n == 3
 %     if velocity1_binned==1 && velocity2_binned==1 &&  (distance < 100) &&(distance > 1)  && n_frame>1 
-    if (distance < 100) &&(distance > 1)  && n_frame>1 
+    if (distance < close_distance) &&(distance > 1)  && n_frame>1 
         em_prob_verb = 1;
-    else 
-        em_prob_verb = my_eps;
+    else
+        em_prob_verb = 0;
     end
 end
 

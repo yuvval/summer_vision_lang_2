@@ -1,18 +1,20 @@
 function [ppvid, res_fname, fname_OF ] = preprocess_video(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections)
 %% init
 if nargin<1
-    vid_fname = '../videos/approach_people_behind.avi'; % Person approaches a chair.
+    vid_fname = '../videos/after2sec_diagonal.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
-    detection_thresh = -1.2;
+    detection_thresh = -1.5;
 end
 if nargin < 3
-    frame_sample_interval = 10; % Sample a frame from video once every X frames.
+    frame_sample_interval = 15; % Sample a frame from video once every X frames.
 end
 if nargin < 4
-    take_top_n_detections = 7;
+    take_top_n_detections = 3;
 end
+
+trim_first_seconds = 3;
 
 addpath ../optical_flow
 addpath ../optical_flow/algorithms/CLG-TV/
@@ -29,7 +31,7 @@ video = obj.read();
 
 Nframes = size(video,4);
 t = 1; % Sampled frames counter.
-for k=1:frame_sample_interval:Nframes
+for k=1 + (trim_first_seconds*30):frame_sample_interval:Nframes
     
     % Evaluate detections.
     im=video(:,:,:,k);

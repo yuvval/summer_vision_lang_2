@@ -10,13 +10,16 @@ clear
 %      ppvid = load('preprocessed_videos/approach_people_side_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_behind_detections_thm1_05_top_7.mat');
 %      ppvid = load('preprocessed_videos/approach_people_diagonal_detections_thm1_05_top_7.mat');
+%      ppvid = load('preprocessed_videos/after2sec_behind_detections_thm1_5_top_3.mat');
+%      ppvid = load('preprocessed_videos/after2sec_diagonal_detections_thm1_5_top_3.mat');
 
 %% 3D
 %     ppvid = load('preprocessed_videos/2chairs_approach_diagonal_3D_detections_thm1_05_top_7.mat');
 %     ppvid = load('preprocessed_videos/2chairs_approach_side_3D_detections_thm1_05_top_7.mat');
 %    ppvid = load('preprocessed_videos/2chairs_approach_behind_3D_detections_thm1_5_top_7.mat');
 %     ppvid = load('preprocessed_videos/approach_people_behind_3D_detections_thm1_05_top_7.mat');
-   ppvid = load('preprocessed_videos/approach_behind_3D_detections_thm1_5_top_3.mat');
+%    ppvid = load('preprocessed_videos/after2sec_behind_3D_detections_thm1_5_top_3.mat');
+     ppvid = load('preprocessed_videos/after2sec_diagonal_3D_detections_thm1_5_top_3.mat');
 
     % setting the tuning params for probabilities and features binning / sigmoiding
     % emission probablities sigmoid params
@@ -43,7 +46,8 @@ clear
     noun2 = 'chair';
     [ cross_em_scores, cross_tr_scores_mat, cross_p_all_hmms_states, debug_info ] = eval_cross_prod_trellis( verb, noun1, noun2, tracker_scores, tracker_feats);
     
-    [seq, score_track, score_history] = viterbi_yuval(cross_em_scores, cross_tr_scores_mat, 0, 1);
+    last_frame_states_mask = cross_p_all_hmms_states{end}(3,:) == 3;
+    [seq, score_track, score_history] = viterbi_yuval(cross_em_scores, cross_tr_scores_mat, last_frame_states_mask, 0, 1);
     
 %% visualize sequence
 if true
@@ -56,7 +60,9 @@ if true
     t=1;
     feat_history = [];
     trk_history = nan(5,1);
-    for k = 1:frame_sample_interval:size(video,4)
+%     for k = 1:frame_sample_interval:size(video,4)
+trim_first_seconds = 3;
+for k=1 + (trim_first_seconds*30):frame_sample_interval:size(video,4)
         
         im=video(:,:,:,k);
         imshow(im);
@@ -93,7 +99,7 @@ if true
         end
         drawnow;
         shg;
-        pause(0.5)
+        pause(0.9)
         t=t+1;
         
     end

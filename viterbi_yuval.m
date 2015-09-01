@@ -1,4 +1,4 @@
-function [seq, score_track, score_history] = viterbi_yuval(em_scores, tr_scores, prev_frame_scores, t)
+function [seq, score_track, score_history] = viterbi_yuval(em_scores, tr_scores, last_frame_states_mask, prev_frame_scores, t)
 
 Nframes = length(em_scores);
 
@@ -21,12 +21,13 @@ end
 % [best_score, best_state] = max(frame_scores); % A BUG!!
 
 if t < Nframes
-    [seq, score_track, score_history] = viterbi_yuval(em_scores, tr_scores, frame_scores, t+1);
+    [seq, score_track, score_history] = viterbi_yuval(em_scores, tr_scores, last_frame_states_mask, frame_scores, t+1);
 end
 
 if t == Nframes
     score_history = cell(t,1);
     [seq, score_track] = deal(nan(t+1,1));
+    frame_scores(~last_frame_states_mask) = -inf;
     [~, best_state] = max(frame_scores);
     seq(end-1:end) = [best_income_transitions(best_state); best_state];
     score_history{t} = frame_scores;

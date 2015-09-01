@@ -1,7 +1,7 @@
 function [ppvid, res_fname, fname_OF, depth_im ] = preprocess_video_3d(vid_fname, detection_thresh, frame_sample_interval, take_top_n_detections )
 %% init
 if nargin<1
-    vid_fname = '../videos/after2sec_behind.avi'; % Person approaches a chair.
+    vid_fname = '../videos/after2sec_diagonal.avi'; % Person approaches a chair.
 end
 
 if nargin < 2
